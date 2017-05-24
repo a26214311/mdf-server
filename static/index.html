@@ -1,8 +1,21 @@
 <html>
 <head>
-
+  <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    $.get('/rooms',function(response,status){
+      var data = eval("("+response+")");
+      var h = '';
+      for (var p in data){
+        h = h + "<div>房间："+p+",人数:"+data[p]+"</div>";
+      }
+      if(Object.keys(data).length==0){
+        h="<div>当前没有房间</div>";
+      }
+      $('#main').html(h);
+    })
+  </script>
 </head>
 <body>
-123
+<div id="main"></div>
 </body>
 </html>

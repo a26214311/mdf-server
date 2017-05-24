@@ -49,3 +49,11 @@ app.ws('/join/*', function(ws, req) {
   });
 });
 app.listen(3333);
+
+app.get('/rooms',function(req,res){
+  var ret = {};
+  for(var p in roomtable){
+    ret[p]=roomtable[p].length;
+  }
+  res.send(JSON.stringify(ret));
+});
