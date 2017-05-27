@@ -59,9 +59,10 @@ app.get('/rooms',function(req,res){
 });
 
 app.get('/rooms2',function(req,res){
-  var ret = [];
+  var ra = [];
   for(var p in roomtable){
-    ret.push({id:p,count:roomtable[p].length});
+    ra.push({id:p,count:roomtable[p].length});
   }
+  var ret = {r:0,d:ra};
   res.send(JSON.stringify(ret));
 });
