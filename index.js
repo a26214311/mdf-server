@@ -57,3 +57,11 @@ app.get('/rooms',function(req,res){
   }
   res.send(JSON.stringify(ret));
 });
+
+app.get('/rooms2',function(req,res){
+  var ret = [];
+  for(var p in roomtable){
+    ret.push({id:p,count:roomtable[p].length});
+  }
+  res.send(JSON.stringify(ret));
+});
