@@ -3,6 +3,7 @@ var app = express();
 var expressWs = require('express-ws')(app);
 var util = require('util');
 var URL = require('url');
+var fs = require('fs');
 app.use(express.static('./static'));
 var roomtable = {};
 app.ws('/join/*', function(ws, req) {
@@ -48,7 +49,10 @@ app.ws('/join/*', function(ws, req) {
     }
   });
 });
-app.listen(3333);
+app.listen(3333,function(){
+  loaduser();
+});
+
 
 app.get('/rooms',function(req,res){
   var ret = {};
@@ -66,3 +70,39 @@ app.get('/rooms2',function(req,res){
   var ret = {r:0,d:ra};
   res.send(JSON.stringify(ret));
 });
+
+
+var users = {};
+app.get('/adduser',function(req,res){
+  var querydata = req.query;
+  var id = querydata.id;
+  var data = querydata.data;
+  if(!users[id]){
+    users[id]=data;
+    saveuser();
+    res.send('0');
+  }else{
+    res.send('1');
+  }
+});
+
+app.get('/getusers',function(req,res){
+  res.send(JSON.stringify(users));
+});
+
+function saveuser(){
+  fs.writeFileSync('users.txt', JSON.stringify(users));
+}
+
+var users = {};
+function loaduser(){
+  var userstr = fs.readFileSync('users.txt','utf-8');
+  var nu = eval("("+userstr+")");
+  for(var p in nu){
+    if(users[p]==undefined){
+      users[p]=nu[p];
+    }
+  }
+
+}
+

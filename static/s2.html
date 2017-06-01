@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" rel="stylesheet">
+  <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <link href="index.css" rel="stylesheet">
+  <title>狗牌统计</title>
+  <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+  <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <div class="row actions">
+    <div class="col-xs-2">
+      <input class="form-control" id="username" placeholder="提督名">
+    </div>
+    <div class="col-xs-6">
+      <input class="form-control" id="userdata" placeholder="备注信息（可填写QQ号或其他信息，让别的提督能通过这些内容找到你)">
+    </div>
+    <div class="col-xs-2">
+      <button class="btn btn-default" onclick="submit();">提交</button>
+    </div>
+  </div>
+  <div><br></br></div>
+  <div id="main">
+    <table class="table table-bordered table-striped table-hover">
+      <thead><td>提督名</td><td>备注信息</td></thead>
+      <tbody id="body"></tbody>
+    </table>
+  </div>
+  <script type="text/javascript">
+    function init(){
+      getusers();
+    }
+    function submit(){
+      var id = $('#username')[0].value;
+      var data = $('#userdata')[0].value;
+      var url = '/adduser?id='+id+'&data='+data;
+      $.get(url,function(response,status){
+        if(status=='success'){
+          if(response==0){
+            getusers();
+          }else{
+            alert('提交失败，可能是由于此提督名已提交过，如果需要修改备注信息请联系管理员');
+          }
+        }
+      })
+    }
+
+    function getusers(){
+      var url = '/getusers';
+      $.get(url,function(response,status){
+        var data = eval("("+response+")");
+        var keys = Object.keys(data).sort();
+        var h = '';
+        for(var i=0;i<keys.length;i++){
+          var id = keys[i];
+          var ud = data[id];
+          h=h+'<tr>'+'<td>'+id+'</td>'+'<td>'+ud+'</td></tr>';
+        }
+        $('#body').html(h);
+
+
+        console.log(data);
+      })
+    }
+  </script>
+</div>
+</body>
+</html>
