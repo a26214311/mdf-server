@@ -77,9 +77,11 @@ app.get('/adduser',function(req,res){
   var querydata = req.query;
   var id = querydata.id;
   var data = querydata.data;
-  if(!users[id]){
-    users[id]=data;
-    saveuser();
+  var userstr = fs.readFileSync('users.txt','utf-8');
+  var nu = eval("("+userstr+")");
+  if(!nu[id]){
+    nu[id]=data;
+    fs.writeFileSync('users.txt', JSON.stringify(nu));
     res.send('0');
   }else{
     res.send('1');
@@ -90,14 +92,6 @@ app.get('/getusers',function(req,res){
   var userstr = fs.readFileSync('users.txt','utf-8');
   res.send(userstr);
 });
-
-app.get('/reload',function(req,res){
-  res.send('ok');
-});
-
-function saveuser(){
-  fs.writeFileSync('users.txt', JSON.stringify(users));
-}
 
 var users = {};
 function loaduser(){
