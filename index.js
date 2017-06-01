@@ -87,7 +87,12 @@ app.get('/adduser',function(req,res){
 });
 
 app.get('/getusers',function(req,res){
-  res.send(JSON.stringify(users));
+  var userstr = fs.readFileSync('users.txt','utf-8');
+  res.send(userstr);
+});
+
+app.get('/reload',function(req,res){
+  res.send('ok');
 });
 
 function saveuser(){
@@ -103,6 +108,5 @@ function loaduser(){
       users[p]=nu[p];
     }
   }
-
 }
 
