@@ -43,7 +43,7 @@
     function submit(){
       var id = $('#username')[0].value;
       var data = $('#userdata')[0].value;
-      var url = '/adduser?id='+encodeURIComponent(id)+'&data='+encodeURIComponent(data);
+      var url = '/adduser?id='+encodeURIComponent(id.trim())+'&data='+encodeURIComponent(data.trim());
       $.get(url,function(response,status){
         if(status=='success'){
           if(response==0){
