@@ -22,18 +22,19 @@
       <button class="btn btn-default" onclick="submit();">提交</button>
     </div>
   </div>
-  <div><br></br></div>
   <div id="main">
     <div style="white-space: pre-wrap;">
       群媛交
       poi可安装插件poi-plugin-escort后复制列表
       演习时遇到列表内提督可提醒媛交
+
     </div>
+    媛交队伍数量：<span style="font-weight: bold;font-size: 30px" id="totalcount"></span>
     <table class="table table-bordered table-striped table-hover">
       <thead><td>提督名</td><td>备注信息</td></thead>
       <tbody id="body"></tbody>
     </table>
-    <div style="font-size: 20" id="totalcount"></div>
+
 
   </div>
   <script type="text/javascript">
@@ -45,15 +46,21 @@
       var id = $('#username')[0].value;
       var data = $('#userdata')[0].value;
       var url = '/adduser?id='+encodeURIComponent(id.trim())+'&data='+encodeURIComponent(data.trim());
-      $.get(url,function(response,status){
-        if(status=='success'){
-          if(response==0){
-            getusers();
-          }else{
-            alert('提交失败，可能是由于此提督名已提交过，如果需要修改备注信息请联系管理员');
+
+      $.ajax({
+        url: url,
+        type: "GET",
+        contentType: "application/x-www-form-urlencoded; charset=utf-8",
+        success: function(response,status){
+          if(status=='success'){
+            if(response==0){
+              getusers();
+            }else{
+              alert('提交失败，可能是由于此提督名已提交过，如果需要修改备注信息请联系管理员');
+            }
           }
         }
-      })
+      });
     }
 
     function getusers(){
