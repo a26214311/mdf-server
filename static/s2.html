@@ -8,6 +8,7 @@
   <title>狗牌统计</title>
   <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
   <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdn.bootcss.com/clipboard.js/1.7.1/clipboard.js"></script>
 </head>
 <body>
 <div class="container">
@@ -27,9 +28,13 @@
       群媛交
       poi可安装插件poi-plugin-escort后复制列表
       演习时遇到列表内提督可提醒媛交
-
     </div>
-    媛交队伍数量：<span style="font-weight: bold;font-size: 30px" id="totalcount"></span>
+    <div>
+      媛交队伍数量：<span style="font-weight: bold;font-size: 30px" id="totalcount"></span>
+      <button class="btn btn-primary" data-clipboard-target="#body">复制到剪贴板</button>
+      <span> </span>
+    </div>
+    <div><br></div>
     <table class="table table-bordered table-striped table-hover">
       <thead><td>提督名</td><td>备注信息</td></thead>
       <tbody id="body"></tbody>
@@ -76,8 +81,7 @@
         }
         $('#body').html(h);
         $('#totalcount').html(keys.length);
-
-        console.log(data);
+        new Clipboard('.btn');
       })
     }
   </script>
