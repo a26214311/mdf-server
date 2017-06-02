@@ -33,6 +33,7 @@
       <thead><td>提督名</td><td>备注信息</td></thead>
       <tbody id="body"></tbody>
     </table>
+    <div style="font-size: 20" id="totalcount"></div>
 
   </div>
   <script type="text/javascript">
@@ -67,7 +68,7 @@
           h=h+'<tr>'+'<td>'+id+'</td>'+'<td>'+ud+'</td></tr>';
         }
         $('#body').html(h);
-
+        $('#totalcount').html(keys.length);
 
         console.log(data);
       })
