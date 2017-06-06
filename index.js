@@ -16,8 +16,11 @@ app.ws('/join/*', function(ws, req) {
     roomtable[roomid]= room;
   }else{
     if(room.length==1){
+      var ws0 = room[0];
       room.push(ws);
       roomtable[roomid] = room;
+      var ret = {r:0,msg:'join'};
+      ws0.send(JSON.stringify(ret));
     }else{
       console.log("room is full");
       var ret = {r:128};
@@ -28,6 +31,7 @@ app.ws('/join/*', function(ws, req) {
   util.inspect(ws);
   ws.on('message', function(msg) {
     var room = roomtable[roomid];
+    console.log(room.length);
     if(room&&room.length==2){
       var ws1 = room[0];
       var ws2 = room[1];
@@ -44,8 +48,17 @@ app.ws('/join/*', function(ws, req) {
     if(room&&room.length==2){
       var ws1 = room[0];
       var ws2 = room[1];
-      ws1.close();
-      ws2.close();
+      var ret = {r:0,msg:'leave'};
+      if(ws==ws1){
+        room=[ws2];
+        roomtable[roomid]=room;
+        ws2.send(JSON.stringify(ret));
+      }
+      if(ws==ws2){
+        room=[ws1];
+        roomtable[roomid]=room;
+        ws1.send(JSON.stringify(ret));
+      }
     }
   });
 });
@@ -70,6 +83,16 @@ app.get('/rooms2',function(req,res){
   var ret = {r:0,d:ra};
   res.send(JSON.stringify(ret));
 });
+
+function hashCode(str){
+  var h = 0, off = 0;
+  var len = str.length;
+  for(var i = 0; i < len; i++){
+    h = 31 * h + str.charCodeAt(off++);
+  }
+  return h;
+}
+
 
 
 var users = {};
