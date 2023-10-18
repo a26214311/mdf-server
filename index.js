@@ -17,7 +17,7 @@ app.ws('/join/*', function(ws, req) {
   if(room==undefined){
     room = [{user:userid,ws:ws}];
     roomtable[roomid]= room;
-    var ret = {result0,join:roomid};
+    var ret = {result:0,join:roomid};
     ws.send(JSON.stringify(ret));
   }else{
     if(room.length==1){
