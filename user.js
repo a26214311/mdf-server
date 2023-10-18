@@ -36,13 +36,13 @@ function login(username,password,callback){
             console.log(data.value);
             var id = data.value.d;
             cl_user.insert({'_id':id,username:username,password:password,info:"",ts:now,regts:now},function(){
-              callback({r:0,id:id,info:""});
+              callback({result:0,id:id,info:""});
             });
           }else{
             var initid = 1234;
             var init = {'_id':'idx',d:initid};
             cl_idx.insert(init,function(err,data2){
-              callback({r:0,id:initid,info:""});
+              callback({result:0,id:initid,info:""});
             })
           }
         }
@@ -52,9 +52,9 @@ function login(username,password,callback){
       if(value.password==password){
         var id = value._id;
         var info = value.info;
-        callback({r:0,id:id,info:info});
+        callback({result:0,id:id,info:info});
       }else{
-        callback({r:ERROR_WRONG_PWD});
+        callback({result:ERROR_WRONG_PWD});
       }
     }
   });
@@ -65,16 +65,16 @@ function uploadInfo(userid,info,callback){
   var query = {'_id':userid};
   cl_user.find(query).limit(1).toArray(function(err,list){
     if(err){
-      callback({r:ERROR_DB_ERROR});
+      callback({result:ERROR_DB_ERROR});
     }else if(list.length==0){
-      callback({r:ERROR_NO_USER_FOUND});
+      callback({result:ERROR_NO_USER_FOUND});
     }else{
       var value = list[0];
       if(info=='get'){
-        callback({r:0,d:value.info});
+        callback({result:0,d:value.info});
       }else{
         cl_user.updateOne({'_id':userid},{'$set':{info:info}},function(err,result){
-          callback({r:0,d:info});
+          callback({result:0,d:info});
         })
       }
     }

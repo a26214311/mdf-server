@@ -17,7 +17,7 @@ app.ws('/join/*', function(ws, req) {
   if(room==undefined){
     room = [{user:userid,ws:ws}];
     roomtable[roomid]= room;
-    var ret = {r:0,join:roomid};
+    var ret = {result0,join:roomid};
     ws.send(JSON.stringify(ret));
   }else{
     if(room.length==1){
@@ -25,14 +25,14 @@ app.ws('/join/*', function(ws, req) {
       var newuser = {user:userid,ws:ws}
       room.push(newuser);
       roomtable[roomid] = room;
-      var ret = {r:0,msg:'join',id:userid};
+      var ret = {result:0,msg:'join',id:userid};
       ws0.ws.send(JSON.stringify(ret));
-      var retok = {r:0,join:roomid,otherid:ws0.user};
+      var retok = {result:0,join:roomid,otherid:ws0.user};
       console.log(retok);
       ws.send(JSON.stringify(retok));
     }else{
       console.log("room is full");
-      var ret = {r:ERROR_ROOM_IS_FULL};
+      var ret = {result:ERROR_ROOM_IS_FULL};
       ws.send(JSON.stringify(ret));
       ws.close();
     }
@@ -46,7 +46,7 @@ app.ws('/join/*', function(ws, req) {
       ws1.ws.send(msg);
       ws2.ws.send(msg);
     }else{
-      var ret = {r:ERROR_ROOM_IS_EMPTY};
+      var ret = {result:ERROR_ROOM_IS_EMPTY};
       ws.send(JSON.stringify(ret));
     }
   });
@@ -57,13 +57,13 @@ app.ws('/join/*', function(ws, req) {
       var ws1 = room[0].ws;
       var ws2 = room[1].ws;
       if(ws==ws1){
-        var ret = {r:0,msg:'leave',id:room[1].user};
+        var ret = {result:0,msg:'leave',id:room[1].user};
         room=[room[1]];
         roomtable[roomid]=room;
         ws2.send(JSON.stringify(ret));
       }
       if(ws==ws2){
-        var ret = {r:0,msg:'leave',id:room[0].user};
+        var ret = {result:0,msg:'leave',id:room[0].user};
         room=[room[0]];
         roomtable[roomid]=room;
         ws1.send(JSON.stringify(ret));
@@ -89,7 +89,7 @@ app.get('/rooms2',function(req,res){
   for(var p in roomtable){
     ra.push({id:p,count:roomtable[p].length});
   }
-  var ret = {r:0,d:ra};
+  var ret = {result:0,d:ra};
   res.send(JSON.stringify(ret));
 });
 
@@ -148,7 +148,7 @@ app.get('/login',function(req,res){
       res.send(JSON.stringify(ret));
     })
   }else{
-    var ret = {r:ERROR_LACK_PARAMETER}
+    var ret = {result:ERROR_LACK_PARAMETER}
     res.send(JSON.stringify(ret));
   }
 });
@@ -162,7 +162,7 @@ app.get('/uploadInfo',function(req,res){
       res.send(JSON.stringify(ret));
     })
   }else{
-    var ret = {r:ERROR_LACK_PARAMETER}
+    var ret = {result:ERROR_LACK_PARAMETER}
     res.send(JSON.stringify(ret));
   }
 });
