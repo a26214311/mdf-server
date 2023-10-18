@@ -6,24 +6,33 @@ var URL = require('url');
 var fs = require('fs');
 app.use(express.static('./static'));
 var roomtable = {};
+var ERROR_ROOM_IS_FULL = 5;
+var ERROR_ROOM_IS_EMPTY = 6;
 app.ws('/join/*', function(ws, req) {
   var path = req.path.substring(1);
   var pa = path.split("/");
   var roomid = pa[1];
+  var userid = pa[2];
   var room = roomtable[roomid];
   if(room==undefined){
-    room = [ws];
+    room = [{user:userid,ws:ws}];
     roomtable[roomid]= room;
+    var ret = {r:0,join:roomid};
+    ws.send(JSON.stringify(ret));
   }else{
     if(room.length==1){
       var ws0 = room[0];
-      room.push(ws);
+      var newuser = {user:userid,ws:ws}
+      room.push(newuser);
       roomtable[roomid] = room;
-      var ret = {r:0,msg:'join'};
-      ws0.send(JSON.stringify(ret));
+      var ret = {r:0,msg:'join',id:userid};
+      ws0.ws.send(JSON.stringify(ret));
+      var retok = {r:0,join:roomid,otherid:ws0.user};
+      console.log(retok);
+      ws.send(JSON.stringify(retok));
     }else{
       console.log("room is full");
-      var ret = {r:128};
+      var ret = {r:ERROR_ROOM_IS_FULL};
       ws.send(JSON.stringify(ret));
       ws.close();
     }
@@ -31,14 +40,13 @@ app.ws('/join/*', function(ws, req) {
   util.inspect(ws);
   ws.on('message', function(msg) {
     var room = roomtable[roomid];
-    console.log(room.length);
     if(room&&room.length==2){
       var ws1 = room[0];
       var ws2 = room[1];
-      ws1.send(msg);
-      ws2.send(msg);
+      ws1.ws.send(msg);
+      ws2.ws.send(msg);
     }else{
-      var ret = {r:102};
+      var ret = {r:ERROR_ROOM_IS_EMPTY};
       ws.send(JSON.stringify(ret));
     }
   });
@@ -46,24 +54,25 @@ app.ws('/join/*', function(ws, req) {
     var room = roomtable[roomid];
     delete(roomtable[roomid]);
     if(room&&room.length==2){
-      var ws1 = room[0];
-      var ws2 = room[1];
-      var ret = {r:0,msg:'leave'};
+      var ws1 = room[0].ws;
+      var ws2 = room[1].ws;
       if(ws==ws1){
-        room=[ws2];
+        var ret = {r:0,msg:'leave',id:room[1].user};
+        room=[room[1]];
         roomtable[roomid]=room;
         ws2.send(JSON.stringify(ret));
       }
       if(ws==ws2){
-        room=[ws1];
+        var ret = {r:0,msg:'leave',id:room[0].user};
+        room=[room[0]];
         roomtable[roomid]=room;
         ws1.send(JSON.stringify(ret));
       }
     }
   });
 });
-app.listen(3333,function(){
-  loaduser();
+app.listen(30066,function(){
+  console.log('server running on 30066')
 });
 
 
@@ -126,4 +135,36 @@ function loaduser(){
     }
   }
 }
+
+
+var ERROR_LACK_PARAMETER = 4;
+const {login,uploadInfo} = require('./user');
+app.get('/login',function(req,res){
+  var querydata = req.query;
+  var username = querydata.username;
+  var password = querydata.password;
+  if(username&&password){
+    login(username,password,function(ret){
+      res.send(JSON.stringify(ret));
+    })
+  }else{
+    var ret = {r:ERROR_LACK_PARAMETER}
+    res.send(JSON.stringify(ret));
+  }
+});
+
+app.get('/uploadInfo',function(req,res){
+  var querydata = req.query;
+  var userid = parseInt(querydata.id);
+  var info = querydata.info;
+  if(userid&&info){
+    uploadInfo(userid,info,function(ret){
+      res.send(JSON.stringify(ret));
+    })
+  }else{
+    var ret = {r:ERROR_LACK_PARAMETER}
+    res.send(JSON.stringify(ret));
+  }
+});
+
 

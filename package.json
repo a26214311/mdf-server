@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "express": "~4.14.0",
-    "express-ws":""
+    "express-ws": "",
+    "mongodb": "^2.2.30",
+    "request": "^2.88.2"
   }
 }
